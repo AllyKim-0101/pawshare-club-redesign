@@ -5,6 +5,7 @@ export const dynamicParams = false;
 export const revalidate = false;
 
 const ORIGIN = "https://www.pawshareclub.com";
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const logoSrc = "https://images.squarespace-cdn.com/content/v1/67eb3485bcafe97633e8e38a/344372ef-2760-4bd7-a00e-191c67e64274/square+space+logo+design+%281%29.jpg?format=1500w";
 const encodedPathOverrides = {
   "blog/category/Pet+Stories/Community+Stories": "blog/category/Pet+Stories%2FCommunity+Stories",
@@ -13,6 +14,8 @@ const encodedPathOverrides = {
 const primaryLinks = [
   ["About", "/about"], ["Events", "/events"], ["Dog walking challenge", "/neighbourhood-dog-walking-challenge"], ["Blog", "/blog"], ["Pricing", "/pricing"], ["Referral bonus", "/referral-bonus"],
 ];
+
+const withBasePath = (href) => `${BASE_PATH}${href}`;
 
 const footerGroups = [
   { title: "About", links: [["About us", "/about"], ["Value and Mission", "/value"], ["Events", "/events"], ["Our Partners", "/our-partners"], ["Blog", "/blog"], ["Contact", "/contact"]] },
@@ -50,7 +53,7 @@ function extractOriginalContent(html) {
       .replace(/\s+on[a-z]+=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
       .replace(/\s+(?:srcdoc|integrity|nonce)=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
       .replace(/javascript:/gi, "")
-      .replace(/(href=["'])https:\/\/www\.pawshareclub\.com(?=\/|["'])/gi, "$1"),
+      .replace(/(href=["'])https:\/\/www\.pawshareclub\.com(?=\/|["'])/gi, (_match, prefix) => `${prefix}${BASE_PATH}`),
   };
 }
 
@@ -107,8 +110,8 @@ export default async function PawsharePage({ params }) {
   return (
     <main className="subpage" data-page={path}>
       <header className="subpage-header">
-        <a className="subpage-logo" href="/" aria-label="Pawshare Club home"><img src={logoSrc} alt="Pawshare Club" /></a>
-        <nav aria-label="Primary navigation">{primaryLinks.map(([label, href]) => <a href={href} key={href}>{label}</a>)}</nav>
+        <a className="subpage-logo" href={`${BASE_PATH}/`} aria-label="Pawshare Club home"><img src={logoSrc} alt="Pawshare Club" /></a>
+        <nav aria-label="Primary navigation">{primaryLinks.map(([label, href]) => <a href={withBasePath(href)} key={href}>{label}</a>)}</nav>
         <a className="subpage-join" href="https://member.pawshareclub.com/signup">Join free</a>
       </header>
       <article className="subpage-content">
@@ -118,8 +121,8 @@ export default async function PawsharePage({ params }) {
         {path === "faqs" ? <div className="subpage-faqs">{faqItems.map((faq) => <details key={faq.question}><summary>{faq.question}</summary><div><FaqContent blocks={faq.blocks} /></div></details>)}</div> : originalContent ? <div className="legacy-page-content" dangerouslySetInnerHTML={{ __html: originalContent.html }} /> : <div className="subpage-copy">{page.sections.map((section) => <p key={section}>{section}</p>)}</div>}
       </article>
       <footer className="subpage-footer">
-        <div className="subpage-footer-top"><div><img src={logoSrc} alt="Pawshare Club" /><p>Building local connections for people and pets across Australia.</p></div><div className="subpage-footer-links">{footerGroups.map((group) => <div key={group.title}><strong>{group.title}</strong>{group.links.map(([label, href]) => <a href={href} key={href}>{label}</a>)}</div>)}</div></div>
-        <div className="subpage-footer-bottom"><span>© 2026 Pawshare Club</span><span><a href="/privacy-policy">Privacy Policy</a><a href="/terms-of-service">Terms of Service</a><a href="/code-of-conduct">Code of Conduct</a></span></div>
+        <div className="subpage-footer-top"><div><img src={logoSrc} alt="Pawshare Club" /><p>Building local connections for people and pets across Australia.</p></div><div className="subpage-footer-links">{footerGroups.map((group) => <div key={group.title}><strong>{group.title}</strong>{group.links.map(([label, href]) => <a href={withBasePath(href)} key={href}>{label}</a>)}</div>)}</div></div>
+        <div className="subpage-footer-bottom"><span>© 2026 Pawshare Club</span><span><a href={withBasePath("/privacy-policy")}>Privacy Policy</a><a href={withBasePath("/terms-of-service")}>Terms of Service</a><a href={withBasePath("/code-of-conduct")}>Code of Conduct</a></span></div>
       </footer>
     </main>
   );
