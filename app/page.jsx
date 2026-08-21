@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { faqItems } from "./site-data";
 
-const SITE = "";
+const SITE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const MEMBER_SITE = "https://member.pawshareclub.com";
 const LOGO_SRC = "https://images.squarespace-cdn.com/content/v1/67eb3485bcafe97633e8e38a/344372ef-2760-4bd7-a00e-191c67e64274/square+space+logo+design+%281%29.jpg?format=1500w";
 
